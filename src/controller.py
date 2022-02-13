@@ -12,7 +12,6 @@ class Controller():
         self.model = Model()
         self.view = View(self.root, self)
         self.root.title("Sudoku")
-        self.root.geometry('600x600')
         self.root.mainloop()
 
     def insertValue(self, sv: Tk.StringVar, i, j):

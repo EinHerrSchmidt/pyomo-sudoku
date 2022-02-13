@@ -34,10 +34,10 @@ class ViewPanel():
                 self.entries[i][j].grid(row=i, column=j, ipadx=5, ipady=5)
                 self.stringVars[i][j] = sv
 
-        solveButton = Tk.Button(root, text="Solve!", width=8, height=2)
+        solveButton = Tk.Button(root, text="Solve", width=8, height=2)
         solveButton.bind("<Button-1>", lambda event: self.controller.solve())
-        solveButton.pack()
+        solveButton.pack(side=Tk.LEFT)
 
-        resetButton = Tk.Button(root, text="Reset!", width=8, height=2)
+        resetButton = Tk.Button(root, text="Reset", width=8, height=2)
         resetButton.bind("<Button-1>", lambda event: self.controller.reset())
-        resetButton.pack()
+        resetButton.pack(side=Tk.RIGHT)

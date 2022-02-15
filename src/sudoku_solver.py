@@ -3,34 +3,34 @@ import pyomo.environ as pyo
 from data_maker import DataMaker
 
 
-def obj_expression(model):
-    return pyo.summation(model.x)
-
-
-def rows_constraint_rule(model, n, i):
-    return sum(model.x[i, j, n]for j in model.j) == 1
-
-
-def columns_constraint_rule(model, n, j):
-    return sum(model.x[i, j, n]for i in model.i) == 1
-
-
-def no_overlap_constraint_rule(model, i, j):
-    return sum(model.x[i, j, n]for n in model.n) == 1
-
-
-def squares_constraint_rule(model, n, r, c):
-    i_range = pyo.RangeSet(3 * r - 2, 3 * r)
-    j_range = pyo.RangeSet(3 * c - 2, 3 * c)
-    return sum(model.x[i, j, n] for i in i_range for j in j_range) == 1
-
-
 class SudokuSolver:
 
     def __init__(self):
         self.dataMaker = DataMaker()
         self.model = pyo.AbstractModel()
         self.initialize_model()
+
+    @staticmethod
+    def obj_expression(model):
+        return pyo.summation(model.x)
+
+    @staticmethod
+    def rows_constraint_rule(model, n, i):
+        return sum(model.x[i, j, n]for j in model.j) == 1
+
+    @staticmethod
+    def columns_constraint_rule(model, n, j):
+        return sum(model.x[i, j, n]for i in model.i) == 1
+
+    @staticmethod
+    def no_overlap_constraint_rule(model, i, j):
+        return sum(model.x[i, j, n]for n in model.n) == 1
+
+    @staticmethod
+    def squares_constraint_rule(model, n, r, c):
+        i_range = pyo.RangeSet(3 * r - 2, 3 * r)
+        j_range = pyo.RangeSet(3 * c - 2, 3 * c)
+        return sum(model.x[i, j, n] for i in i_range for j in j_range) == 1
 
     def initialize_model(self):
         self.model.I = pyo.Param(within=pyo.NonNegativeIntegers)
@@ -50,25 +50,26 @@ class SudokuSolver:
                                self.model.n,
                                domain=pyo.Binary)
 
-        self.model.obj = pyo.Objective(rule=obj_expression, sense=pyo.maximize)
+        self.model.obj = pyo.Objective(
+            rule=self.obj_expression, sense=pyo.maximize)
 
         self.model.rows = pyo.Constraint(
             self.model.n,
             self.model.i,
-            rule=rows_constraint_rule)
+            rule=self.rows_constraint_rule)
         self.model.cols = pyo.Constraint(
             self.model.n,
             self.model.j,
-            rule=columns_constraint_rule)
+            rule=self.columns_constraint_rule)
         self.model.overlap = pyo.Constraint(
             self.model.i,
             self.model.j,
-            rule=no_overlap_constraint_rule)
+            rule=self.no_overlap_constraint_rule)
         self.model.squares = pyo.Constraint(
             self.model.n,
             self.model.r,
             self.model.c,
-            rule=squares_constraint_rule)
+            rule=self.squares_constraint_rule)
 
     def fix_variables(self, sudokuGrid):
         for i in range(0, 9):
